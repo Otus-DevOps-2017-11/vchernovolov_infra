@@ -27,3 +27,29 @@ gcloud compute instances create reddit-app2\
   --zone=europe-west2-a \
   --metadata startup-script-url=https://raw.githubusercontent.com/Otus-DevOps-2017-11/vchernovolov_infra/Infra-2/startup.sh
 ```
+
+
+
+# ДЗ-07
+
+## Валидация конфигурации создаваемого образа:
+
+```
+packer validate ubuntu16.json
+```
+
+## Создание образа, указывая значения отдельных переменных:
+
+```
+packer build \
+  -var 'project_id=affable-enigma-189317' \
+  -var 'source_image_family=ubuntu-1604-lts' \
+  -var 'machine_type=f1-micro' \
+  ubuntu16.json
+```
+
+## Создание образа, указывая файл variables.json, заполненный в соответствии с файлом-примером variables.json.example:
+
+```
+packer build -var-file=variables.json ubuntu16.json
+```
