@@ -1,0 +1,33 @@
+{
+  "variables": {
+    "project_id" : "affable-enigma-189317",
+    "source_image_family" : "ubuntu-1604-lts",
+    "machine_type" :"f1-micro"
+  },
+  "builders": [{
+    "type": "googlecompute",
+    "project_id": "{{user `project_id`}}",
+    "image_name": "reddit-base-{{timestamp}}",
+    "image_family": "reddit-base",
+    "source_image_family": "{{user `source_image_family`}}",
+    "zone": "europe-west2-b",
+    "ssh_username": "appuser",
+    "machine_type": "{{user `machine_type`}}",
+    "disk_size": "12",
+    "disk_type": "pd-standard",
+    "image_description": "reddit-base image",
+    "network": "default",
+    "tags": ["tag1", "tag2"]
+  }],
+  "provisioners": [{
+      "type": "shell",
+      "script": "scripts/install_ruby.sh",
+      "execute_command": "sudo {{.Path}}"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/install_mongodb.sh",
+      "execute_command": "sudo {{.Path}}"
+    }
+  ]
+}
