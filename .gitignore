@@ -1,2 +1,9 @@
 # packer build var-json file
 variables.json
+
+# terraform ingore files
+*.tfstate
+*.tfstate.*.backup
+*.tfstate.backup
+*.tfvars
+.terraform/
