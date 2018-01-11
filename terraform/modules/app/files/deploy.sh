@@ -1,8 +1,7 @@
-
 #!/bin/bash
 set -e
 
-APP_DIR=${1:-$HOME}
+APP_DIR=$HOME
 
 git clone https://github.com/Otus-DevOps-2017-11/reddit.git $APP_DIR/reddit
 cd $APP_DIR/reddit
