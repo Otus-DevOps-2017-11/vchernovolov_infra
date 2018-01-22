@@ -157,3 +157,85 @@ ansible dbserver -i ./inventory -m ping
 ```
 ansible all -m ping -i inventory.yml
 ```
+
+# ДЗ-11 "Деплой и управление конфигурацией с Ansible"
+
+## Создано несколько плейбуков для настройки и деплоя инстансов db и app
+`ansible/reddit_app_one_play.yml` - плейбуки для db и app в одном `play-book`, тегами разграничены db, app, deploy<br>
+`ansible/reddit_app_multiple_plays.yml` - также плейбуки для настройки БД и приложения в одном файле, но разные `play-book`, тегами разграничены db, app, deploy
+
+
+## Настройки конфигов БД шаблонизированы (ansible/templates)
+- `ansible/templates/mongod.conf.j2` - конфиг mongodb
+- `ansible/templates/db_config.j2` - файл, содержащий переменные, необходимые для приложения (`puma.service`)
+
+## Unit файл приложения `puma.service` вынесен в ansible/files
+Через EnvironmentFile получили доступ к БД (DATABASE_URL)
+
+## Проверка и запуск плейбуков reddit_app_one_play, reddit_app_multiple_plays
+db
+```
+ansible-playbook reddit_app_one_play.yml --tags db-tag --check
+ansible-playbook reddit_app_one_play.yml --tags db-tag
+```
+```
+ansible-playbook reddit_app_multiple_plays.yml --tags db-tag --check
+ansible-playbook reddit_app_multiple_plays.yml --tags db-tag
+```
+
+app
+```
+ansible-playbook reddit_app_one_play.yml --tags app-tag --check
+ansible-playbook reddit_app_one_play.yml --tags app-tag
+```
+```
+ansible-playbook reddit_app_multiple_plays.yml --tags app-tag --check
+ansible-playbook reddit_app_multiple_plays.yml --tags app-tag
+```
+
+deploy
+```
+ansible-playbook reddit_app_one_play.yml --tags deploy-tag --check
+ansible-playbook reddit_app_one_play.yml --tags deploy-tag
+```
+```
+ansible-playbook reddit_app_multiple_plays.yml --tags deploy-tag --check
+ansible-playbook reddit_app_multiple_plays.yml --tags deploy-tag
+```
+
+## Далее созданы плейбуки в отдельных файлых для db, app, deploy
+- `ansible/db.yml`
+- `ansible/app.yml`
+- `ansible/deploy.yml`
+
+## Затем все 3 плейбука (db, app, deploy) были собраны в одном - `site.yml`
+```
+- import_playbook: db.yml
+- import_playbook: app.yml
+- import_playbook: deploy.yml
+```
+
+Проверка и запуск плейбука site.yml
+```
+ansible-playbook site.yml --check
+```
+```
+ansible-playbook site.yml
+```
+
+## Реализованы плейбуки для `provisioner`s образов `packer`
+- `ansible/packer_db.yml`
+- `ansible/packer_app.yml`
+
+Данные плейбуки указаны в секции `provisioner` файлов сборки образов
+- `packer/db.json`
+- `packer/app.json`
+
+После чего были пересозданы образы, пересозданы инстансы окружения `stage` и
+сконфигурированы инстансы db & app
+```
+ansible-playbook site.yml --check
+```
+```
+ansible-playbook site.yml
+```
