@@ -9,3 +9,4 @@ variables.json
 .terraform/
 packer/build.*
 *.retry
+jdauphant.nginx
