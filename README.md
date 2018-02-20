@@ -272,3 +272,51 @@ ansible-galaxy init app
 ```
 <app-instance-ip>:80
 ```
+
+
+# ДЗ-13 "Разработка и тестирование Ansible ролей и плейбуков"
+
+## Установлен ```vagrant```, описана локальная конфигурация в ```Vagrantfile```
+Созданы 2 VM appserver, dbserver
+
+## В файле локальной конфигурации истользованы ```provisioner```'s ```ansible```
+
+Применена конфигурация с использованием ролей
+```
+vagrant provision dbserver
+```
+```
+vagrant provision appserver
+```
+
+## Доработаны роли ```db```, ```app``` для применения в локальной конфигурации
+
+## Проведено тестирование роли ```db```
+
+Установлены необходимые компоненты для тестирования
+- molecule
+- testinfra
+- python-vagrant
+
+Создана заготовка тестов для роли ```db```
+```
+molecule init scenario --scenario-name default -r db -d vagrant
+```
+
+Добавлены тесты для тестирования роли<br>
+Создана тестовая машина для проверки машины
+```
+molecule create
+```
+Изменен плейбук для применения роли<br>
+Применены изменения
+```
+molecule converge
+```
+Запуск тестов
+```
+molecule verify
+```
+
+## Роли ```db``` и ```app``` использованы в плейбуках ```packer_db.yml``` и ```packer_app.yml```
+Собраны образы ```packer```'ом с использованием ролей ```ansible```
